@@ -1,0 +1,32 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# Virtual environment
+venv/
+env/
+
+# Logs
+*.log
+scraping.log
+cron_job.log
+
+# Data files
+car_data.csv
+car_hrefs.csv
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Credentials and sensitive files
+*.pem
+*.key
+
+*.png

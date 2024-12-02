@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraping Status</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function startScraping() {
+            fetch('/start_scraping')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                    updateStatus();
+                });
+        }
+
+        function stopScraping() {
+            fetch('/stop_scraping')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data.message);
+                });
+        }
+
+        function updateStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('total_hrefs').innerText = data.total_hrefs;
+                    document.getElementById('total_cars').innerText = data.total_cars;
+                    document.getElementById('last_car').innerText = data.last_car;
+                    document.getElementById('log').innerHTML = formatLog(data.log);
+                    document.getElementById('status_message').innerText = data.status_message;
+                });
+        }
+
+        function formatLog(log) {
+            return log.split('\n').map(line => {
+                if (line.includes('ERROR')) {
+                    return `<span style="color: red;">${line}</span>`;
+                } else if (line.includes('WARNING')) {
+                    return `<span style="color: orange;">${line}</span>`;
+                } else {
+                    return `<span>${line}</span>`;
+                }
+            }).join('<br>');
+        }
+
+        setInterval(updateStatus, 5000); // Update status every 5 seconds
+    </script>
+</head>
+<body>
+    <h1>Scraping Status</h1>
+    <div class="controls">
+        <button onclick="startScraping()">Start Scraping</button>
+        <button onclick="stopScraping()">Stop Scraping</button>
+        <a href="/download_csv" download="car_data.csv">Download Car Data</a>
+    </div>
+    <div class="status">
+        <p><strong>Status:</strong> <span id="status_message">Idle</span></p>
+        <p><strong>Total Hrefs Scraped:</strong> <span id="total_hrefs">0</span></p>
+        <p><strong>Total Cars Scraped:</strong> <span id="total_cars">0</span></p>
+        <p><strong>Last Scraped Car:</strong> <span id="last_car">N/A</span></p>
+    </div>
+    <div class="log">
+        <h2>Log</h2>
+        <pre id="log"></pre>
+    </div>
+</body>
+</html>
